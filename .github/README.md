@@ -23,6 +23,14 @@ which is located at `.minecraft/config/civmodern.properties`.
 
 ## Changes
 
+- Added auto-run macro.
+
+- Added support for [ModMenu](https://modrinth.com/mod/modmenu) and Forge's native mod list.
+
+- Improved compact item mixin performance.
+
+- Shows an item's repair level by default in advanced-tooltips mode.
+
 ## Requirements
 
 | Fabric                                                                         | Forge                                     |
