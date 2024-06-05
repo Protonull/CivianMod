@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Alexander <protonull@protonmail.com>
+Date: Wed, 5 Jun 2024 14:59:26 +0100
+Subject: [PATCH] Add auto-run macro
+
+
+diff --git a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
+index adeaf42759f2ff892af53b4b258e96475bd2a5b7..df92f08652acb07a311953768786fbc8d49ea40f 100644
+--- a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
++++ b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
+@@ -13,8 +13,6 @@ import java.util.Properties;
+ import net.minecraft.client.KeyMapping;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.Options;
+-import net.minecraft.client.gui.Gui;
+-import net.minecraft.client.renderer.entity.ItemRenderer;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ import org.jetbrains.annotations.NotNull;
+@@ -35,6 +33,12 @@ public abstract class AbstractCivModernMod {
+     private final KeyMapping configBinding;
+     private final KeyMapping holdLeftBinding;
+     private final KeyMapping holdRightBinding;
++    private final KeyMapping holdForwardBinding = new KeyMapping(
++        "key.civmodern.autorun",
++        Type.KEYSYM,
++        GLFW.GLFW_KEY_LEFT_BRACKET,
++        "category.civmodern"
++    );
+     private final KeyMapping iceRoadBinding;
+     private final KeyMapping attackBinding;
+     private CivMapConfig config;
+@@ -91,6 +95,7 @@ public abstract class AbstractCivModernMod {
+         registerKeyBinding(this.configBinding);
+         registerKeyBinding(this.holdLeftBinding);
+         registerKeyBinding(this.holdRightBinding);
++        registerKeyBinding(this.holdForwardBinding);
+         registerKeyBinding(attackBinding);
+         registerKeyBinding(this.iceRoadBinding);
+     }
+@@ -104,6 +109,7 @@ public abstract class AbstractCivModernMod {
+         Options options = Minecraft.getInstance().options;
+         this.leftMacro = new HoldKeyMacro(this, this.holdLeftBinding, options.keyAttack);
+         this.rightMacro = new HoldKeyMacro(this, this.holdRightBinding, options.keyUse);
++        new HoldKeyMacro(this, this.holdForwardBinding, options.keyUp);
+         this.iceRoadMacro = new IceRoadMacro(this, config, this.iceRoadBinding);
+         this.attackMacro = new AttackMacro(this, this.attackBinding, options.keyAttack);
+     }
+diff --git a/common/src/main/resources/assets/civmodern/lang/en_us.json b/common/src/main/resources/assets/civmodern/lang/en_us.json
+index 56791d67771c47a65570606b196620b1f09910f1..61c55e1b5c88affb814e5c4337d9e0cd75032d0b 100644
+--- a/common/src/main/resources/assets/civmodern/lang/en_us.json
++++ b/common/src/main/resources/assets/civmodern/lang/en_us.json
+@@ -1,6 +1,7 @@
+ {
+     "key.civmodern.left": "Hold left mouse button",
+     "key.civmodern.right": "Hold right mouse button",
++    "key.civmodern.autorun": "Toggle auto-run",
+     "key.civmodern.ice": "Toggle ice road macro",
+     "key.civmodern.attack": "Toggle attack macro",
+     "key.civmodern.config": "Open Civ Modern configuration",

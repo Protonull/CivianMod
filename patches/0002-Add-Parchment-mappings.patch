@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Alexander <protonull@protonmail.com>
+Date: Wed, 5 Jun 2024 15:04:13 +0100
+Subject: [PATCH] Add Parchment mappings
+
+
+diff --git a/build.gradle b/build.gradle
+index cb6071cef04dea674f991593c5ad340674fc869e..27355a58bf4df4c9aadd0f7bb70cdb8e4ad871f0 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -19,7 +19,10 @@ subprojects {
+ 
+     dependencies {
+         minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
+-        mappings(loom.officialMojangMappings())
++        mappings(loom.layered() {
++            officialMojangMappings()
++            parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:${rootProject.parchment_version}@zip")
++        })
+     }
+ }
+ 
+@@ -33,11 +36,10 @@ allprojects {
+     group = rootProject.maven_group
+ 
+     repositories {
+-        // Add repositories to retrieve artifacts from in here.
+-        // You should only use this when depending on other mods because
+-        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+-        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+-        // for more information about repositories.
++        maven {
++            name = "ParchmentMC"
++            url = "https://maven.parchmentmc.org"
++        }
+     }
+ 
+     tasks.withType(JavaCompile).configureEach {
+diff --git a/gradle.properties b/gradle.properties
+index 0be1e465ee0c616d65bb3b55fff31bc3cd102b1b..77e9e58b742ee879d3aad77d0a3e942f0002a744 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -12,6 +12,8 @@ mod_issues_url=https://github.com/okx-code/civmodern/issues
+ minecraft_version=1.20.4
+ architectury_version=11.1.13
+ enabled_platforms=fabric,forge
++# https://parchmentmc.org/docs/getting-started
++parchment_version=2024.04.14
+ 
+ # https://fabricmc.net/versions.html
+ fabric_loader_version=0.15.7

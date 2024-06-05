@@ -1,0 +1,247 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Alexander <protonull@protonmail.com>
+Date: Wed, 5 Jun 2024 15:08:40 +0100
+Subject: [PATCH] Add show item repair level option
+
+
+diff --git a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
+index 3659b7dfdefffdddd535eb4654068b63b91aa1d2..bea27cb64d5ee2ef31bc099465fd994712826dba 100644
+--- a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
++++ b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
+@@ -155,6 +155,10 @@ public abstract class AbstractCivModernMod {
+         this.radar = new Radar(config, eventBus, colourProvider);
+     }
+ 
++    public @NotNull CivMapConfig getConfig() {
++        return this.config;
++    }
++
+     public ColourProvider getColourProvider() {
+         return colourProvider;
+     }
+diff --git a/common/src/main/java/sh/okx/civmodern/common/CivMapConfig.java b/common/src/main/java/sh/okx/civmodern/common/CivMapConfig.java
+index 7b03be3db69f5d4bef3fee4313a991691c7b6f85..ef9f82263e39578facccd3b67558aac4ab1cd13f 100644
+--- a/common/src/main/java/sh/okx/civmodern/common/CivMapConfig.java
++++ b/common/src/main/java/sh/okx/civmodern/common/CivMapConfig.java
+@@ -35,6 +35,7 @@ public class CivMapConfig {
+     private boolean iceRoadStop;
+     private boolean showItems;
+     private boolean northUp;
++    public boolean showRepairLevel;
+ 
+     public CivMapConfig(File file, Properties properties) {
+         this.file = file;
+@@ -59,6 +60,7 @@ public class CivMapConfig {
+         this.bgTransparency = Float.parseFloat(properties.getProperty("bg_transparency", String.valueOf(this.transparency)));
+         this.showItems = Boolean.parseBoolean(properties.getProperty("show_items", "true"));
+         this.northUp = Boolean.parseBoolean(properties.getProperty("north_up", "false"));
++        this.showRepairLevel = Boolean.parseBoolean(properties.getProperty("show_repair_level", "true"));
+     }
+ 
+     public void save() {
+@@ -85,6 +87,7 @@ public class CivMapConfig {
+             properties.setProperty("ice_road_stop", Boolean.toString(iceRoadStop));
+             properties.setProperty("show_items", Boolean.toString(showItems));
+             properties.setProperty("north_up", Boolean.toString(northUp));
++            properties.setProperty("show_repair_level", Boolean.toString(this.showRepairLevel));
+ 
+             try (FileOutputStream output = new FileOutputStream(file)) {
+                 properties.store(output, null);
+diff --git a/common/src/main/java/sh/okx/civmodern/common/gui/screen/CompactedConfigScreen.java b/common/src/main/java/sh/okx/civmodern/common/gui/screen/CompactedConfigScreen.java
+index e656c6de58d64e6fc7c948b48fbbf3279d42e7a7..6c072b63ecf6df46cf529189dc5c0722e2a3614b 100644
+--- a/common/src/main/java/sh/okx/civmodern/common/gui/screen/CompactedConfigScreen.java
++++ b/common/src/main/java/sh/okx/civmodern/common/gui/screen/CompactedConfigScreen.java
+@@ -1,9 +1,12 @@
+ package sh.okx.civmodern.common.gui.screen;
+ 
++import java.text.DecimalFormat;
++import java.util.regex.Pattern;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.GuiGraphics;
+ import net.minecraft.client.gui.components.Button;
+ import net.minecraft.client.gui.components.EditBox;
++import net.minecraft.client.gui.components.Tooltip;
+ import net.minecraft.client.gui.screens.Screen;
+ import net.minecraft.client.player.LocalPlayer;
+ import net.minecraft.nbt.CompoundTag;
+@@ -19,9 +22,7 @@ import sh.okx.civmodern.common.CivMapConfig;
+ import sh.okx.civmodern.common.ColourProvider;
+ import sh.okx.civmodern.common.gui.widget.HsbColourPicker;
+ import sh.okx.civmodern.common.gui.widget.ImageButton;
+-
+-import java.text.DecimalFormat;
+-import java.util.regex.Pattern;
++import sh.okx.civmodern.common.gui.widget.ToggleButton;
+ 
+ public class CompactedConfigScreen extends Screen {
+     private static final DecimalFormat FORMAT = new DecimalFormat("##%");
+@@ -94,6 +95,17 @@ public class CompactedConfigScreen extends Screen {
+ 
+         addRenderableWidget(picker = hsb);
+ 
++        addRenderableWidget(new ToggleButton(
++            (this.width / 2) - (ToggleButton.DEFAULT_BUTTON_WIDTH / 2),
++            (this.height / 6) + 30,
++            ToggleButton.DEFAULT_BUTTON_WIDTH,
++            Component.translatable("civmodern.screen.items.showRepair"),
++            () -> this.config.showRepairLevel,
++            (value) -> this.config.showRepairLevel = value,
++            Tooltip.create(Component.translatable("civmodern.screen.items.showRepair.tooltip")),
++            ToggleButton.DEFAULT_NARRATION
++        ));
++
+         addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> {
+             config.save();
+             minecraft.setScreen(parent);
+@@ -102,6 +114,8 @@ public class CompactedConfigScreen extends Screen {
+ 
+     @Override
+     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
++        super.renderBackground(guiGraphics, mouseX, mouseY, delta);
++
+         drawCentredText(guiGraphics, this.title, 0, 15, 0xffffff);
+ 
+         drawItem(guiGraphics);
+diff --git a/common/src/main/java/sh/okx/civmodern/common/gui/widget/ToggleButton.java b/common/src/main/java/sh/okx/civmodern/common/gui/widget/ToggleButton.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..cf631bd5a68b207f65fb09bd7c23f0038744539c
+--- /dev/null
++++ b/common/src/main/java/sh/okx/civmodern/common/gui/widget/ToggleButton.java
+@@ -0,0 +1,54 @@
++package sh.okx.civmodern.common.gui.widget;
++
++import java.util.Objects;
++import net.minecraft.client.gui.components.Button;
++import net.minecraft.client.gui.components.Tooltip;
++import net.minecraft.network.chat.Component;
++import org.jetbrains.annotations.NotNull;
++
++public class ToggleButton extends Button {
++    public static final int DEFAULT_BUTTON_WIDTH = 150;
++    public static final int BUTTON_HEIGHT = 20;
++    public static final CreateNarration DEFAULT_NARRATION = Button.DEFAULT_NARRATION;
++
++    @FunctionalInterface
++    public interface ValueGetter { boolean get(); }
++    @FunctionalInterface
++    public interface ValueSetter { void set(boolean value); }
++
++    private final Component label;
++    private final ValueGetter valueGetter;
++    private final ValueSetter valueSetter;
++
++    public ToggleButton(
++        final int x,
++        final int y,
++        final int width,
++        final @NotNull Component label,
++        final ValueGetter valueGetter,
++        final ValueSetter valueSetter,
++        final Tooltip tooltip,
++        final @NotNull CreateNarration createNarration
++    ) {
++        super(x, y, width, BUTTON_HEIGHT, Component.empty(), null, createNarration);
++        this.label = Objects.requireNonNull(label);
++        this.valueGetter = Objects.requireNonNull(valueGetter);
++        this.valueSetter = Objects.requireNonNull(valueSetter);
++        setMessage(generateLabel());
++        setTooltip(tooltip);
++    }
++
++    protected final @NotNull Component generateLabel() {
++        return Component.translatable(
++            "civmodern.button.toggle",
++            this.label,
++            Component.literal(this.valueGetter.get() ? "ON" : "OFF")
++        );
++    }
++
++    @Override
++    public void onPress() {
++        this.valueSetter.set(!this.valueGetter.get());
++        setMessage(generateLabel());
++    }
++}
+diff --git a/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java b/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java
+index 399dee20951977e63cbfdd013316dba59b0d4091..79da0d989ff7c9119212e2e1cb55701dd3959790 100644
+--- a/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java
++++ b/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java
+@@ -1,13 +1,23 @@
+ package sh.okx.civmodern.common.mixins.compacted;
+ 
++import com.llamalad7.mixinextras.sugar.Local;
++import java.util.List;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.ListTag;
+ import net.minecraft.nbt.Tag;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.Style;
++import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
++import net.minecraft.world.item.TooltipFlag;
++import org.jetbrains.annotations.NotNull;
+ import org.spongepowered.asm.mixin.Mixin;
+ import org.spongepowered.asm.mixin.Unique;
++import org.spongepowered.asm.mixin.injection.At;
++import org.spongepowered.asm.mixin.injection.Inject;
++import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
++import sh.okx.civmodern.common.AbstractCivModernMod;
++import sh.okx.civmodern.common.CivMapConfig;
+ import sh.okx.civmodern.common.features.compacted.PotentiallyCompactedItem;
+ 
+ @Mixin(ItemStack.class)
+@@ -57,4 +67,31 @@ public abstract class ItemStackMixin implements PotentiallyCompactedItem {
+         }
+         return false;
+     }
++
++    @Inject(
++        method = "getTooltipLines",
++        at = @At(
++            value = "INVOKE",
++            target = "Lnet/minecraft/world/item/ItemStack;isDamaged()Z",
++            shift = At.Shift.BEFORE
++        )
++    )
++    private void cm_inject$getTooltipLines(
++        final Player player,
++        final @NotNull TooltipFlag isAdvanced,
++        final @NotNull CallbackInfoReturnable<List<Component>> cir,
++        final @NotNull @Local List<Component> lines
++    ) {
++        final ItemStack self = (ItemStack) (Object) this;
++        final CivMapConfig config = AbstractCivModernMod.getInstance().getConfig();
++        if (config.showRepairLevel) {
++            final int repairCost = self.getBaseRepairCost();
++            if (repairCost > 0) {
++                lines.add(Component.translatable(
++                    "civmodern.repair.cost",
++                    Integer.toString(repairCost)
++                ));
++            }
++        }
++    }
+ }
+diff --git a/common/src/main/resources/assets/civmodern/lang/en_us.json b/common/src/main/resources/assets/civmodern/lang/en_us.json
+index 61c55e1b5c88affb814e5c4337d9e0cd75032d0b..d2b4c8d5099ee6a9a31050b33da5975dab6b82a6 100644
+--- a/common/src/main/resources/assets/civmodern/lang/en_us.json
++++ b/common/src/main/resources/assets/civmodern/lang/en_us.json
+@@ -27,6 +27,8 @@
+     "civmodern.screen.radar.transparency": "Transparency: %s",
+     "civmodern.screen.radar.background_transparency": "BG Transparency: %s",
+     "civmodern.screen.compacted.title": "Civ Modern Config (Compacted Items)",
++    "civmodern.screen.items.showRepair": "Show repair level",
++    "civmodern.screen.items.showRepair.tooltip": "Whether to show the item's base repair level. This will NOT be the level shown in the Anvil, but rather the base number used to calculate that number.",
+     "civmodern.screen.ice.title": "Civ Modern Config (Ice Road Macro)",
+     "civmodern.screen.ice.cardinal.pitch.enable": "Snap pitch to cardinal: Enabled",
+     "civmodern.screen.ice.cardinal.pitch.disable": "Snap pitch to cardinal: Disabled",
+@@ -38,5 +40,7 @@
+     "civmodern.screen.ice.stop.disable": "Stop on low food: Disabled",
+     "civmodern.radar.enter" : "§r%s §eappeared at §b[%s§b]",
+     "civmodern.radar.hover" : "Click to highlight position\nControl click to add waypoint",
+-    "civmodern.radar.leave" : "§r%s §edisappeared at §b[%s§b]"
++    "civmodern.radar.leave" : "§r%s §edisappeared at §b[%s§b]",
++    "civmodern.repair.cost": "§fRepair cost: %s",
++    "civmodern.button.toggle": "%s: %s"
+ }
+\ No newline at end of file

@@ -1,0 +1,109 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Alexander <protonull@protonmail.com>
+Date: Wed, 5 Jun 2024 15:18:50 +0100
+Subject: [PATCH] Make CivMC specific
+
+
+diff --git a/civmc b/civmc
+deleted file mode 100644
+index e69de29bb2d1d6434b8b29ae775ad8c2e48c5391..0000000000000000000000000000000000000000
+diff --git a/common/src/main/java/sh/okx/civmodern/common/radar/Radar.java b/common/src/main/java/sh/okx/civmodern/common/radar/Radar.java
+index f62e3cdca8d0a6efa00fc9fbe9b4f99ac622d240..2354ee0cec414372c7dbc29022c85fed994b2a8a 100644
+--- a/common/src/main/java/sh/okx/civmodern/common/radar/Radar.java
++++ b/common/src/main/java/sh/okx/civmodern/common/radar/Radar.java
+@@ -46,7 +46,6 @@ import sh.okx.civmodern.common.events.ClientTickEvent;
+ import sh.okx.civmodern.common.events.EventBus;
+ import sh.okx.civmodern.common.events.PostRenderGameOverlayEvent;
+ 
+-import java.net.URL;
+ import java.util.Collections;
+ import java.util.HashSet;
+ import java.util.Random;
+@@ -56,18 +55,6 @@ import java.util.UUID;
+ import static org.lwjgl.opengl.GL11.*;
+ 
+ public class Radar {
+-
+-    private static boolean hideY;
+-
+-    static {
+-        URL resource = Radar.class.getResource("/civmc");
+-        if (resource != null) {
+-            hideY = true;
+-        } else {
+-            hideY = false;
+-        }
+-    }
+-
+     private final EventBus eventBus;
+     private final ColourProvider colourProvider;
+     private final CivMapConfig config;
+@@ -97,7 +84,7 @@ public class Radar {
+     }
+ 
+     private boolean hideY() {
+-        return hideY;
++        return true;
+     }
+ 
+     @Subscribe
+diff --git a/fabric/build.gradle b/fabric/build.gradle
+index 09720c2087bd31b10f3958b852dd65dd0b28cd63..0386193a83d2903bfe4aed83f6b7212544ed3c83 100644
+--- a/fabric/build.gradle
++++ b/fabric/build.gradle
+@@ -75,16 +75,6 @@ publishing {
+     }
+ }
+ 
+-import net.fabricmc.loom.task.RemapJarTask
+-
+-tasks.register("remapCivMc", RemapJarTask) {
+-    inputFile.set shadowJar.archiveFile
+-    dependsOn shadowJar
+-    archiveClassifier = "civmc-fabric"
+-    from sourceSets.main.output
+-    from "../civmc"
+-}
+-
+ tasks.register("cleanJar", Delete) {
+     delete fileTree("../dist") {
+         include "*-fabric.jar"
+@@ -93,7 +83,7 @@ tasks.register("cleanJar", Delete) {
+ 
+ tasks.register("copyJar", Copy) {
+     dependsOn cleanJar
+-    from remapJar, remapCivMc
++    from remapJar
+     into "../dist"
+ }
+ 
+diff --git a/forge/build.gradle b/forge/build.gradle
+index f3362a8c1b3521eda32ee7cdb9c32ee81771472c..339ee0b212f717d88594be6fd3ae473ac545522d 100644
+--- a/forge/build.gradle
++++ b/forge/build.gradle
+@@ -82,16 +82,6 @@ publishing {
+     }
+ }
+ 
+-import net.fabricmc.loom.task.RemapJarTask
+-
+-tasks.register("remapCivMc", RemapJarTask) {
+-    inputFile.set shadowJar.archiveFile
+-    dependsOn shadowJar
+-    archiveClassifier = "civmc-forge"
+-    from sourceSets.main.output
+-    from "../civmc"
+-}
+-
+ tasks.register("cleanJar", Delete) {
+     delete fileTree("../dist") {
+         include "*-forge.jar"
+@@ -100,7 +90,7 @@ tasks.register("cleanJar", Delete) {
+ 
+ tasks.register("copyJar", Copy) {
+     dependsOn cleanJar
+-    from remapJar, remapCivMc
++    from remapJar
+     into "../dist"
+ }
+ 
