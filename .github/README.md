@@ -25,6 +25,8 @@ which is located at `.minecraft/config/civmodern.properties`.
 
 - Added auto-run macro.
 
+- Added better toggle sneaking. Use `]` to activate toggle sneak. Will automatically deactivate itself if you manually `SHIFT` sneak, or if you enter water, or start swimming, elytra gliding, or creative flying.
+
 - Added support for [ModMenu](https://modrinth.com/mod/modmenu) and Forge's native mod list.
 
 - Improved compact item mixin performance.

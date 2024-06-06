@@ -1,0 +1,166 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Alexander <protonull@protonmail.com>
+Date: Thu, 6 Jun 2024 15:44:27 +0100
+Subject: [PATCH] Add toggle-sneak macro
+
+
+diff --git a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
+index bea27cb64d5ee2ef31bc099465fd994712826dba..7e27290f08b9a95c69f88ddb84c6b47784bb7a85 100644
+--- a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
++++ b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
+@@ -7,7 +7,6 @@ import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
+ import java.io.InputStream;
+-import java.lang.reflect.Field;
+ import java.nio.file.Path;
+ import java.util.Properties;
+ import net.minecraft.client.KeyMapping;
+@@ -24,6 +23,7 @@ import sh.okx.civmodern.common.gui.screen.MainConfigScreen;
+ import sh.okx.civmodern.common.macro.AttackMacro;
+ import sh.okx.civmodern.common.macro.HoldKeyMacro;
+ import sh.okx.civmodern.common.macro.IceRoadMacro;
++import sh.okx.civmodern.common.macro.ToggleSneakMacro;
+ import sh.okx.civmodern.common.radar.Radar;
+ 
+ public abstract class AbstractCivModernMod {
+@@ -40,6 +40,12 @@ public abstract class AbstractCivModernMod {
+         GLFW.GLFW_KEY_LEFT_BRACKET,
+         "category.civmodern"
+     );
++    private final KeyMapping holdSneakBinding = new KeyMapping(
++        "key.civmodern.holdsneak",
++        Type.KEYSYM,
++        GLFW.GLFW_KEY_RIGHT_BRACKET,
++        "key.categories.movement"
++    );
+     private final KeyMapping iceRoadBinding;
+     private final KeyMapping attackBinding;
+     private CivMapConfig config;
+@@ -97,6 +103,7 @@ public abstract class AbstractCivModernMod {
+         registerKeyBinding(this.holdLeftBinding);
+         registerKeyBinding(this.holdRightBinding);
+         registerKeyBinding(this.holdForwardBinding);
++        registerKeyBinding(this.holdSneakBinding);
+         registerKeyBinding(attackBinding);
+         registerKeyBinding(this.iceRoadBinding);
+     }
+@@ -111,6 +118,7 @@ public abstract class AbstractCivModernMod {
+         this.leftMacro = new HoldKeyMacro(this, this.holdLeftBinding, options.keyAttack);
+         this.rightMacro = new HoldKeyMacro(this, this.holdRightBinding, options.keyUse);
+         new HoldKeyMacro(this, this.holdForwardBinding, options.keyUp);
++        new ToggleSneakMacro(this, this.holdSneakBinding);
+         this.iceRoadMacro = new IceRoadMacro(this, config, this.iceRoadBinding);
+         this.attackMacro = new AttackMacro(this, this.attackBinding, options.keyAttack);
+     }
+diff --git a/common/src/main/java/sh/okx/civmodern/common/macro/ToggleSneakMacro.java b/common/src/main/java/sh/okx/civmodern/common/macro/ToggleSneakMacro.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..f57aa47c0852f4f9de1e41ff1a7790bbf2ba9d7e
+--- /dev/null
++++ b/common/src/main/java/sh/okx/civmodern/common/macro/ToggleSneakMacro.java
+@@ -0,0 +1,72 @@
++package sh.okx.civmodern.common.macro;
++
++import com.google.common.eventbus.Subscribe;
++import com.mojang.blaze3d.platform.InputConstants;
++import java.util.Objects;
++import net.minecraft.client.KeyMapping;
++import net.minecraft.client.Minecraft;
++import net.minecraft.client.OptionInstance;
++import net.minecraft.client.Options;
++import net.minecraft.client.player.LocalPlayer;
++import org.jetbrains.annotations.NotNull;
++import sh.okx.civmodern.common.AbstractCivModernMod;
++import sh.okx.civmodern.common.events.ClientTickEvent;
++import sh.okx.civmodern.common.mixins.KeyMappingAccessor;
++
++public class ToggleSneakMacro {
++    private final KeyMapping macroBinding;
++    private final KeyMapping sneakBinding;
++    private final KeyMappingAccessor sneakBindingAccessor;
++    private final OptionInstance<Boolean> toggleSneak;
++
++    public ToggleSneakMacro(
++        final @NotNull AbstractCivModernMod mod,
++        final @NotNull KeyMapping macroBinding
++    ) {
++        mod.eventBus.register(this);
++        this.macroBinding = Objects.requireNonNull(macroBinding);
++        final Options options = Minecraft.getInstance().options;
++        this.sneakBinding = options.keyShift;
++        this.sneakBindingAccessor = (KeyMappingAccessor) this.sneakBinding;
++        this.toggleSneak = options.toggleCrouch();
++    }
++
++    @Subscribe
++    private void onTick(
++        final @NotNull ClientTickEvent event
++    ) {
++        final LocalPlayer player = Minecraft.getInstance().player;
++        if (player == null) {
++            return;
++        }
++
++        final boolean isSneaking = this.sneakBinding.isDown();
++
++        while (this.macroBinding.consumeClick()) {
++            this.toggleSneak.set(false);
++            if (isSneaking) {
++                this.sneakBinding.setDown(false);
++                continue;
++            }
++            this.sneakBinding.setDown(true);
++            this.toggleSneak.set(true);
++        }
++
++        while (this.sneakBinding.consumeClick()) {
++            this.toggleSneak.set(false);
++        }
++
++        if (
++            player.isInWater()
++                || player.isSwimming()
++                || player.isFallFlying() // Elytra gliding
++                || player.getAbilities().flying // Creative flying
++        ) {
++            this.toggleSneak.set(false);
++            this.sneakBinding.setDown(InputConstants.isKeyDown(
++                Minecraft.getInstance().getWindow().getWindow(),
++                this.sneakBindingAccessor.getKey().getValue()
++            ));
++        }
++    }
++}
+diff --git a/common/src/main/java/sh/okx/civmodern/common/mixins/KeyMappingAccessor.java b/common/src/main/java/sh/okx/civmodern/common/mixins/KeyMappingAccessor.java
+index b479941e8c4381c114d302f9a15ab362e941aa4b..e829d2b897a16cdc6569f8b21d01049458cc743d 100644
+--- a/common/src/main/java/sh/okx/civmodern/common/mixins/KeyMappingAccessor.java
++++ b/common/src/main/java/sh/okx/civmodern/common/mixins/KeyMappingAccessor.java
+@@ -1,6 +1,8 @@
+ package sh.okx.civmodern.common.mixins;
+ 
++import com.mojang.blaze3d.platform.InputConstants;
+ import net.minecraft.client.KeyMapping;
++import org.jetbrains.annotations.NotNull;
+ import org.spongepowered.asm.mixin.Mixin;
+ import org.spongepowered.asm.mixin.gen.Accessor;
+ 
+@@ -11,4 +13,7 @@ public interface KeyMappingAccessor {
+ 
+     @Accessor("clickCount")
+     void setClickCount(int clickCount);
++
++    @Accessor("key")
++    @NotNull InputConstants.Key getKey();
+ }
+diff --git a/common/src/main/resources/assets/civmodern/lang/en_us.json b/common/src/main/resources/assets/civmodern/lang/en_us.json
+index 9a70c15e6a49c4546562681da0bf91b89f6ac8cd..fee19b39fe44a79924a974eec81393ad60481770 100644
+--- a/common/src/main/resources/assets/civmodern/lang/en_us.json
++++ b/common/src/main/resources/assets/civmodern/lang/en_us.json
+@@ -2,6 +2,7 @@
+     "key.civmodern.left": "Hold left mouse button",
+     "key.civmodern.right": "Hold right mouse button",
+     "key.civmodern.autorun": "Toggle auto-run",
++    "key.civmodern.holdsneak": "Toggle sneak",
+     "key.civmodern.ice": "Toggle ice road macro",
+     "key.civmodern.attack": "Toggle attack macro",
+     "key.civmodern.config": "Open Civ Modern configuration",
