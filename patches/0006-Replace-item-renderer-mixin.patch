@@ -8,17 +8,16 @@ Content-Transfer-Encoding: 8bit
 
 Instead of replacing the entire renderItemDecorations method, this instead makes two injections. But before all that, this mixins the ItemStack class to add a cached result so that we aren't wading into the item's NBT every 👏 single 👏 frame 👏.
 
-diff --git a/common/src/main/java/sh/okx/civmodern/common/features/compacted/PotentiallyCompactedItem.java b/common/src/main/java/sh/okx/civmodern/common/features/compacted/PotentiallyCompactedItem.java
+diff --git a/common/src/main/java/sh/okx/civmodern/common/features/ExtendedItemStack.java b/common/src/main/java/sh/okx/civmodern/common/features/ExtendedItemStack.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..7fa4c064c7546f57a8ff16e863ee0f2e2f8a9578
+index 0000000000000000000000000000000000000000..eeff819ae228fa94328b2f0e3964b2b9347090d1
 --- /dev/null
-+++ b/common/src/main/java/sh/okx/civmodern/common/features/compacted/PotentiallyCompactedItem.java
-@@ -0,0 +1,7 @@
-+package sh.okx.civmodern.common.features.compacted;
++++ b/common/src/main/java/sh/okx/civmodern/common/features/ExtendedItemStack.java
+@@ -0,0 +1,6 @@
++package sh.okx.civmodern.common.features;
 +
-+public interface PotentiallyCompactedItem {
++public interface ExtendedItemStack {
 +    String COMPACTED_ITEM_LORE = "Compacted Item";
-+
 +    boolean isMarkedAsCompacted();
 +}
 diff --git a/common/src/main/java/sh/okx/civmodern/common/mixins/DecorationsGuiGraphicsMixin.java b/common/src/main/java/sh/okx/civmodern/common/mixins/DecorationsGuiGraphicsMixin.java
@@ -116,13 +115,13 @@ index 2156a3b35b40d08754adebca22d50aafe150cbbd..00000000000000000000000000000000
 -        return false;
 -    }
 -}
-diff --git a/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/GuiGraphicsMixin.java b/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/GuiGraphicsMixin.java
+diff --git a/common/src/main/java/sh/okx/civmodern/common/mixins/GuiGraphicsMixin.java b/common/src/main/java/sh/okx/civmodern/common/mixins/GuiGraphicsMixin.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8051611a6c91a9e079acbb94218a5402fa9b037a
+index 0000000000000000000000000000000000000000..de746105dda6e3235cfb05031ff78bbc3dc41cf3
 --- /dev/null
-+++ b/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/GuiGraphicsMixin.java
++++ b/common/src/main/java/sh/okx/civmodern/common/mixins/GuiGraphicsMixin.java
 @@ -0,0 +1,53 @@
-+package sh.okx.civmodern.common.mixins.compacted;
++package sh.okx.civmodern.common.mixins;
 +
 +import com.llamalad7.mixinextras.sugar.Local;
 +import com.llamalad7.mixinextras.sugar.ref.LocalRef;
@@ -136,12 +135,12 @@ index 0000000000000000000000000000000000000000..8051611a6c91a9e079acbb94218a5402
 +import org.spongepowered.asm.mixin.injection.ModifyConstant;
 +import org.spongepowered.asm.mixin.injection.ModifyVariable;
 +import sh.okx.civmodern.common.AbstractCivModernMod;
-+import sh.okx.civmodern.common.features.compacted.PotentiallyCompactedItem;
++import sh.okx.civmodern.common.features.ExtendedItemStack;
 +
 +@Mixin(GuiGraphics.class)
 +public abstract class GuiGraphicsMixin {
 +    @Unique
-+    private boolean cm_unique$isCompactedItem = false;
++    private boolean cm$isCompactedItem = false;
 +
 +    @ModifyVariable(
 +        method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V",
@@ -152,11 +151,11 @@ index 0000000000000000000000000000000000000000..8051611a6c91a9e079acbb94218a5402
 +        ),
 +        argsOnly = true
 +    )
-+    public @NotNull ItemStack cm_modify_variable$renderItemDecorations(
++    public @NotNull ItemStack cm$alwaysShowItemAmountIfCompacted(
 +        final @NotNull ItemStack stack,
 +        final @Local(argsOnly = true) LocalRef<String> text
 +    ) {
-+        if (this.cm_unique$isCompactedItem = ((PotentiallyCompactedItem) (Object) stack).isMarkedAsCompacted()) {
++        if (this.cm$isCompactedItem = ((ExtendedItemStack) (Object) stack).isMarkedAsCompacted()) {
 +            text.set(Integer.toString(stack.getCount()));
 +        }
 +        return stack;
@@ -166,22 +165,22 @@ index 0000000000000000000000000000000000000000..8051611a6c91a9e079acbb94218a5402
 +        method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V",
 +        constant = @Constant(intValue = 16777215)
 +    )
-+    public int cm_modify_constant$renderItemDecorations(
++    public int cm$colourItemDecorationIfCompacted(
 +        final int decorationColour
 +    ) {
-+        if (this.cm_unique$isCompactedItem) {
++        if (this.cm$isCompactedItem) {
 +            return AbstractCivModernMod.getInstance().getColourProvider().getCompactedColour();
 +        }
 +        return decorationColour;
 +    }
 +}
-diff --git a/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java b/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java
+diff --git a/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java b/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..399dee20951977e63cbfdd013316dba59b0d4091
+index 0000000000000000000000000000000000000000..3b02b7a62f280590223ba89a514e3284cd867808
 --- /dev/null
-+++ b/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java
++++ b/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java
 @@ -0,0 +1,60 @@
-+package sh.okx.civmodern.common.mixins.compacted;
++package sh.okx.civmodern.common.mixins;
 +
 +import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.nbt.ListTag;
@@ -191,24 +190,24 @@ index 0000000000000000000000000000000000000000..399dee20951977e63cbfdd013316dba5
 +import net.minecraft.world.item.ItemStack;
 +import org.spongepowered.asm.mixin.Mixin;
 +import org.spongepowered.asm.mixin.Unique;
-+import sh.okx.civmodern.common.features.compacted.PotentiallyCompactedItem;
++import sh.okx.civmodern.common.features.ExtendedItemStack;
 +
 +@Mixin(ItemStack.class)
-+public abstract class ItemStackMixin implements PotentiallyCompactedItem {
++public abstract class ItemStackMixin implements ExtendedItemStack {
 +    @Unique
-+    private Boolean cm_unique$isCompacted = null;
++    private Boolean cm$isCompacted = null;
 +
 +    @Unique
 +    @Override
 +    public boolean isMarkedAsCompacted() {
-+        if (this.cm_unique$isCompacted == null) {
-+            this.cm_unique$isCompacted = cm_unique$isCompacted();
++        if (this.cm$isCompacted == null) {
++            this.cm$isCompacted = cm$isCompacted();
 +        }
-+        return this.cm_unique$isCompacted;
++        return this.cm$isCompacted;
 +    }
 +
 +    @Unique
-+    private boolean cm_unique$isCompacted() {
++    private boolean cm$isCompacted() {
 +        final CompoundTag itemTag = ((ItemStack) (Object) this).getTag();
 +        if (itemTag == null) {
 +            return false;
@@ -234,7 +233,7 @@ index 0000000000000000000000000000000000000000..399dee20951977e63cbfdd013316dba5
 +                }
 +                content.append(child.getString());
 +            }
-+            if (PotentiallyCompactedItem.COMPACTED_ITEM_LORE.contentEquals(content)) {
++            if (ExtendedItemStack.COMPACTED_ITEM_LORE.contentEquals(content)) {
 +                return true;
 +            }
 +        }
@@ -242,18 +241,18 @@ index 0000000000000000000000000000000000000000..399dee20951977e63cbfdd013316dba5
 +    }
 +}
 diff --git a/common/src/main/resources/civmodern.mixins.json b/common/src/main/resources/civmodern.mixins.json
-index 050e517ede60a63ceaa9a0ba88e880f46cb15b21..9db9bc27300b5ab1675ddeabfcdc59d350d8ce72 100644
+index 050e517ede60a63ceaa9a0ba88e880f46cb15b21..9ac61b79a7d623284bfadeecdd75307721ef218f 100644
 --- a/common/src/main/resources/civmodern.mixins.json
 +++ b/common/src/main/resources/civmodern.mixins.json
 @@ -5,9 +5,10 @@
      "compatibilityLevel": "JAVA_17",
      "mixins": [],
      "client": [
-+        "compacted.GuiGraphicsMixin",
-+        "compacted.ItemStackMixin",
++        "GuiGraphicsMixin",
          "InventoryMixin",
 -        "KeyMappingAccessor",
 -        "DecorationsGuiGraphicsMixin"
++        "ItemStackMixin",
 +        "KeyMappingAccessor"
      ],
      "server": [],

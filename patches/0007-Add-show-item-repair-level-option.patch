@@ -162,12 +162,12 @@ index 0000000000000000000000000000000000000000..cf631bd5a68b207f65fb09bd7c23f003
 +        setMessage(generateLabel());
 +    }
 +}
-diff --git a/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java b/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java
-index 399dee20951977e63cbfdd013316dba59b0d4091..79da0d989ff7c9119212e2e1cb55701dd3959790 100644
---- a/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java
-+++ b/common/src/main/java/sh/okx/civmodern/common/mixins/compacted/ItemStackMixin.java
+diff --git a/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java b/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java
+index 3b02b7a62f280590223ba89a514e3284cd867808..e79cb64be75755ea6152fd015a81d15864238195 100644
+--- a/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java
++++ b/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java
 @@ -1,13 +1,23 @@
- package sh.okx.civmodern.common.mixins.compacted;
+ package sh.okx.civmodern.common.mixins;
  
 +import com.llamalad7.mixinextras.sugar.Local;
 +import java.util.List;
@@ -187,10 +187,10 @@ index 399dee20951977e63cbfdd013316dba59b0d4091..79da0d989ff7c9119212e2e1cb55701d
 +import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 +import sh.okx.civmodern.common.AbstractCivModernMod;
 +import sh.okx.civmodern.common.CivMapConfig;
- import sh.okx.civmodern.common.features.compacted.PotentiallyCompactedItem;
+ import sh.okx.civmodern.common.features.ExtendedItemStack;
  
  @Mixin(ItemStack.class)
-@@ -57,4 +67,31 @@ public abstract class ItemStackMixin implements PotentiallyCompactedItem {
+@@ -57,4 +67,31 @@ public abstract class ItemStackMixin implements ExtendedItemStack {
          }
          return false;
      }
@@ -203,7 +203,7 @@ index 399dee20951977e63cbfdd013316dba59b0d4091..79da0d989ff7c9119212e2e1cb55701d
 +            shift = At.Shift.BEFORE
 +        )
 +    )
-+    private void cm_inject$getTooltipLines(
++    private void cm$showRepairLevel(
 +        final Player player,
 +        final @NotNull TooltipFlag isAdvanced,
 +        final @NotNull CallbackInfoReturnable<List<Component>> cir,
@@ -215,7 +215,7 @@ index 399dee20951977e63cbfdd013316dba59b0d4091..79da0d989ff7c9119212e2e1cb55701d
 +            final int repairCost = self.getBaseRepairCost();
 +            if (repairCost > 0) {
 +                lines.add(Component.translatable(
-+                    "civmodern.repair.cost",
++                    "civmodern.repair.level",
 +                    Integer.toString(repairCost)
 +                ));
 +            }
@@ -223,7 +223,7 @@ index 399dee20951977e63cbfdd013316dba59b0d4091..79da0d989ff7c9119212e2e1cb55701d
 +    }
  }
 diff --git a/common/src/main/resources/assets/civmodern/lang/en_us.json b/common/src/main/resources/assets/civmodern/lang/en_us.json
-index 61c55e1b5c88affb814e5c4337d9e0cd75032d0b..d2b4c8d5099ee6a9a31050b33da5975dab6b82a6 100644
+index 61c55e1b5c88affb814e5c4337d9e0cd75032d0b..9a70c15e6a49c4546562681da0bf91b89f6ac8cd 100644
 --- a/common/src/main/resources/assets/civmodern/lang/en_us.json
 +++ b/common/src/main/resources/assets/civmodern/lang/en_us.json
 @@ -27,6 +27,8 @@
@@ -231,7 +231,7 @@ index 61c55e1b5c88affb814e5c4337d9e0cd75032d0b..d2b4c8d5099ee6a9a31050b33da5975d
      "civmodern.screen.radar.background_transparency": "BG Transparency: %s",
      "civmodern.screen.compacted.title": "Civ Modern Config (Compacted Items)",
 +    "civmodern.screen.items.showRepair": "Show repair level",
-+    "civmodern.screen.items.showRepair.tooltip": "Whether to show the item's base repair level. This will NOT be the level shown in the Anvil, but rather the base number used to calculate that number.",
++    "civmodern.screen.items.showRepair.tooltip": "Whether to show the item's base repair level. This ISN'T the total repair cost in an Anvil! The total cost is typically level+2.",
      "civmodern.screen.ice.title": "Civ Modern Config (Ice Road Macro)",
      "civmodern.screen.ice.cardinal.pitch.enable": "Snap pitch to cardinal: Enabled",
      "civmodern.screen.ice.cardinal.pitch.disable": "Snap pitch to cardinal: Disabled",
@@ -241,7 +241,7 @@ index 61c55e1b5c88affb814e5c4337d9e0cd75032d0b..d2b4c8d5099ee6a9a31050b33da5975d
      "civmodern.radar.hover" : "Click to highlight position\nControl click to add waypoint",
 -    "civmodern.radar.leave" : "§r%s §edisappeared at §b[%s§b]"
 +    "civmodern.radar.leave" : "§r%s §edisappeared at §b[%s§b]",
-+    "civmodern.repair.cost": "§fRepair cost: %s",
++    "civmodern.repair.level": "§fRepair level: %s",
 +    "civmodern.button.toggle": "%s: %s"
  }
 \ No newline at end of file
