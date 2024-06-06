@@ -1,12 +1,8 @@
-name: "CivModern Latest Gradle CI"
+name: "CivModern Release Gradle CI"
 
 on:
-  push:
-    branches:
-      - "master"
-    paths:
-      - "patches/**/*"
-  workflow_dispatch: {}
+  release:
+    types: [published]
 
 permissions:
   contents: write
@@ -33,12 +29,12 @@ jobs:
         run: "./gradlew build"
         working-directory: project
 
-      - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "Latest Build"
-          files: |
-            LICENCE
-            project/dist/*.jar
+      - name: "Publishing CivModern"
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} "LICENCE" --clobber
+          for file in $(find "project/dist/" -maxdepth 1 -type f -name "*.jar"); do
+            echo "Uploading $file"
+            gh release upload ${{ github.event.release.tag_name }} "$file" --clobber
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

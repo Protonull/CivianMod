@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Alexander <protonull@protonmail.com>
+Date: Thu, 6 Jun 2024 10:00:17 +0100
+Subject: [PATCH] Use -PATCHED versioning
+
+
+diff --git a/gradle.properties b/gradle.properties
+index 0be1e465ee0c616d65bb3b55fff31bc3cd102b1b..99f708e75d47445100634301ab0aa77d75c56749 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -2,7 +2,7 @@ org.gradle.jvmargs=-Xmx3072M
+ 
+ archives_base_name=civmodern
+ maven_group=sh.okx.civmodern
+-mod_version=1.6.1
++mod_version=1.6.1-PATCHED
+ mod_description=Civ Modern
+ copyright_licence=GPLv3
+ mod_home_url=https://github.com/okx-code/civmodern

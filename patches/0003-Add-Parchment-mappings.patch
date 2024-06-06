@@ -37,7 +37,7 @@ index cb6071cef04dea674f991593c5ad340674fc869e..27355a58bf4df4c9aadd0f7bb70cdb8e
  
      tasks.withType(JavaCompile).configureEach {
 diff --git a/gradle.properties b/gradle.properties
-index 0be1e465ee0c616d65bb3b55fff31bc3cd102b1b..77e9e58b742ee879d3aad77d0a3e942f0002a744 100644
+index 99f708e75d47445100634301ab0aa77d75c56749..d6e79d289438ba0dfc0a7d9d7bbf036df1868f1e 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -12,6 +12,8 @@ mod_issues_url=https://github.com/okx-code/civmodern/issues
