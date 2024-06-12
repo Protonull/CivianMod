@@ -48,10 +48,10 @@ index f62e3cdca8d0a6efa00fc9fbe9b4f99ac622d240..2354ee0cec414372c7dbc29022c85fed
  
      @Subscribe
 diff --git a/fabric/build.gradle b/fabric/build.gradle
-index 09720c2087bd31b10f3958b852dd65dd0b28cd63..0386193a83d2903bfe4aed83f6b7212544ed3c83 100644
+index 83fec77b3e4844561496b42580cf686b27f1fff7..18be897a8fbbf9fe919a2979d346332941a649ef 100644
 --- a/fabric/build.gradle
 +++ b/fabric/build.gradle
-@@ -75,16 +75,6 @@ publishing {
+@@ -78,16 +78,6 @@ publishing {
      }
  }
  
@@ -68,7 +68,7 @@ index 09720c2087bd31b10f3958b852dd65dd0b28cd63..0386193a83d2903bfe4aed83f6b72125
  tasks.register("cleanJar", Delete) {
      delete fileTree("../dist") {
          include "*-fabric.jar"
-@@ -93,7 +83,7 @@ tasks.register("cleanJar", Delete) {
+@@ -96,7 +86,7 @@ tasks.register("cleanJar", Delete) {
  
  tasks.register("copyJar", Copy) {
      dependsOn cleanJar
@@ -78,10 +78,10 @@ index 09720c2087bd31b10f3958b852dd65dd0b28cd63..0386193a83d2903bfe4aed83f6b72125
  }
  
 diff --git a/forge/build.gradle b/forge/build.gradle
-index f3362a8c1b3521eda32ee7cdb9c32ee81771472c..339ee0b212f717d88594be6fd3ae473ac545522d 100644
+index 94d7fc77147ded7538d6205c8a9d3ba7a0de8841..255dfedc6edb059cf59c1f6bd75ce352405d9a98 100644
 --- a/forge/build.gradle
 +++ b/forge/build.gradle
-@@ -82,16 +82,6 @@ publishing {
+@@ -86,16 +86,6 @@ publishing {
      }
  }
  
@@ -98,7 +98,7 @@ index f3362a8c1b3521eda32ee7cdb9c32ee81771472c..339ee0b212f717d88594be6fd3ae473a
  tasks.register("cleanJar", Delete) {
      delete fileTree("../dist") {
          include "*-forge.jar"
-@@ -100,7 +90,7 @@ tasks.register("cleanJar", Delete) {
+@@ -104,7 +94,7 @@ tasks.register("cleanJar", Delete) {
  
  tasks.register("copyJar", Copy) {
      dependsOn cleanJar

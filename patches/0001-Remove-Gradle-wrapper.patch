@@ -1,9 +1,24 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Alexander <protonull@protonmail.com>
-Date: Wed, 12 Jun 2024 16:25:00 +0100
+Date: Wed, 12 Jun 2024 16:58:40 +0100
 Subject: [PATCH] Remove Gradle wrapper
 
 
+diff --git a/build.gradle b/build.gradle
+index c45fdcad2f11098029583978012a9ce45fbe8fca..9e7906ec26a9cd73ddeaba7b9f423bcd7f159756 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -57,3 +57,10 @@ allprojects {
+         withSourcesJar()
+     }
+ }
++
++tasks {
++    wrapper {
++        // Prevent the Gradle wrapper from downloading
++        enabled = false
++    }
++}
 diff --git a/gradle/wrapper/gradle-wrapper.jar b/gradle/wrapper/gradle-wrapper.jar
 deleted file mode 100644
 index d64cd4917707c1f8861d8cb53dd15194d4248596..0000000000000000000000000000000000000000

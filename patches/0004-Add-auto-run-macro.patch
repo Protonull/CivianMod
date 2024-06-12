@@ -5,19 +5,10 @@ Subject: [PATCH] Add auto-run macro
 
 
 diff --git a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
-index adeaf42759f2ff892af53b4b258e96475bd2a5b7..df92f08652acb07a311953768786fbc8d49ea40f 100644
+index 6182ea076d8296b9bd4ccd4a53b7f0fa482f37f4..71c23dac30df9c8c6b45077dd4f31ee8bf6704a1 100644
 --- a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
 +++ b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
-@@ -13,8 +13,6 @@ import java.util.Properties;
- import net.minecraft.client.KeyMapping;
- import net.minecraft.client.Minecraft;
- import net.minecraft.client.Options;
--import net.minecraft.client.gui.Gui;
--import net.minecraft.client.renderer.entity.ItemRenderer;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- import org.jetbrains.annotations.NotNull;
-@@ -35,6 +33,12 @@ public abstract class AbstractCivModernMod {
+@@ -36,6 +36,12 @@ public abstract class AbstractCivModernMod {
      private final KeyMapping configBinding;
      private final KeyMapping holdLeftBinding;
      private final KeyMapping holdRightBinding;
@@ -30,7 +21,7 @@ index adeaf42759f2ff892af53b4b258e96475bd2a5b7..df92f08652acb07a311953768786fbc8
      private final KeyMapping iceRoadBinding;
      private final KeyMapping attackBinding;
      private CivMapConfig config;
-@@ -91,6 +95,7 @@ public abstract class AbstractCivModernMod {
+@@ -92,6 +98,7 @@ public abstract class AbstractCivModernMod {
          registerKeyBinding(this.configBinding);
          registerKeyBinding(this.holdLeftBinding);
          registerKeyBinding(this.holdRightBinding);
@@ -38,7 +29,7 @@ index adeaf42759f2ff892af53b4b258e96475bd2a5b7..df92f08652acb07a311953768786fbc8
          registerKeyBinding(attackBinding);
          registerKeyBinding(this.iceRoadBinding);
      }
-@@ -104,6 +109,7 @@ public abstract class AbstractCivModernMod {
+@@ -105,6 +112,7 @@ public abstract class AbstractCivModernMod {
          Options options = Minecraft.getInstance().options;
          this.leftMacro = new HoldKeyMacro(this, this.holdLeftBinding, options.keyAttack);
          this.rightMacro = new HoldKeyMacro(this, this.holdRightBinding, options.keyUse);

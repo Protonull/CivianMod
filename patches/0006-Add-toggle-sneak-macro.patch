@@ -5,7 +5,7 @@ Subject: [PATCH] Add toggle-sneak macro
 
 
 diff --git a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
-index bea27cb64d5ee2ef31bc099465fd994712826dba..7e27290f08b9a95c69f88ddb84c6b47784bb7a85 100644
+index 18203419d5b0ad515f602177d664bceeac8863d3..65703f020f750980549e01f485df14b85ee6e696 100644
 --- a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
 +++ b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
 @@ -7,7 +7,6 @@ import java.io.FileInputStream;
@@ -16,7 +16,7 @@ index bea27cb64d5ee2ef31bc099465fd994712826dba..7e27290f08b9a95c69f88ddb84c6b477
  import java.nio.file.Path;
  import java.util.Properties;
  import net.minecraft.client.KeyMapping;
-@@ -24,6 +23,7 @@ import sh.okx.civmodern.common.gui.screen.MainConfigScreen;
+@@ -26,6 +25,7 @@ import sh.okx.civmodern.common.gui.screen.MainConfigScreen;
  import sh.okx.civmodern.common.macro.AttackMacro;
  import sh.okx.civmodern.common.macro.HoldKeyMacro;
  import sh.okx.civmodern.common.macro.IceRoadMacro;
@@ -24,7 +24,7 @@ index bea27cb64d5ee2ef31bc099465fd994712826dba..7e27290f08b9a95c69f88ddb84c6b477
  import sh.okx.civmodern.common.radar.Radar;
  
  public abstract class AbstractCivModernMod {
-@@ -40,6 +40,12 @@ public abstract class AbstractCivModernMod {
+@@ -42,6 +42,12 @@ public abstract class AbstractCivModernMod {
          GLFW.GLFW_KEY_LEFT_BRACKET,
          "category.civmodern"
      );
@@ -37,7 +37,7 @@ index bea27cb64d5ee2ef31bc099465fd994712826dba..7e27290f08b9a95c69f88ddb84c6b477
      private final KeyMapping iceRoadBinding;
      private final KeyMapping attackBinding;
      private CivMapConfig config;
-@@ -97,6 +103,7 @@ public abstract class AbstractCivModernMod {
+@@ -99,6 +105,7 @@ public abstract class AbstractCivModernMod {
          registerKeyBinding(this.holdLeftBinding);
          registerKeyBinding(this.holdRightBinding);
          registerKeyBinding(this.holdForwardBinding);
@@ -45,7 +45,7 @@ index bea27cb64d5ee2ef31bc099465fd994712826dba..7e27290f08b9a95c69f88ddb84c6b477
          registerKeyBinding(attackBinding);
          registerKeyBinding(this.iceRoadBinding);
      }
-@@ -111,6 +118,7 @@ public abstract class AbstractCivModernMod {
+@@ -113,6 +120,7 @@ public abstract class AbstractCivModernMod {
          this.leftMacro = new HoldKeyMacro(this, this.holdLeftBinding, options.keyAttack);
          this.rightMacro = new HoldKeyMacro(this, this.holdRightBinding, options.keyUse);
          new HoldKeyMacro(this, this.holdForwardBinding, options.keyUp);

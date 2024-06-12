@@ -5,10 +5,10 @@ Subject: [PATCH] Add show item repair level option
 
 
 diff --git a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
-index 3659b7dfdefffdddd535eb4654068b63b91aa1d2..bea27cb64d5ee2ef31bc099465fd994712826dba 100644
+index 71c23dac30df9c8c6b45077dd4f31ee8bf6704a1..18203419d5b0ad515f602177d664bceeac8863d3 100644
 --- a/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
 +++ b/common/src/main/java/sh/okx/civmodern/common/AbstractCivModernMod.java
-@@ -155,6 +155,10 @@ public abstract class AbstractCivModernMod {
+@@ -157,6 +157,10 @@ public abstract class AbstractCivModernMod {
          this.radar = new Radar(config, eventBus, colourProvider);
      }
  
@@ -163,7 +163,7 @@ index 0000000000000000000000000000000000000000..cf631bd5a68b207f65fb09bd7c23f003
 +    }
 +}
 diff --git a/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java b/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java
-index 3b02b7a62f280590223ba89a514e3284cd867808..e79cb64be75755ea6152fd015a81d15864238195 100644
+index 1c234ad8c6fdb49bfbf818df01f24e867bc10c0f..640395fdfe7d3747ea54cd40b4a96a3e4bc70303 100644
 --- a/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java
 +++ b/common/src/main/java/sh/okx/civmodern/common/mixins/ItemStackMixin.java
 @@ -1,13 +1,23 @@
