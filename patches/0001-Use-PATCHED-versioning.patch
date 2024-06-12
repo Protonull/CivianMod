@@ -5,7 +5,7 @@ Subject: [PATCH] Use -PATCHED versioning
 
 
 diff --git a/gradle.properties b/gradle.properties
-index 0be1e465ee0c616d65bb3b55fff31bc3cd102b1b..99f708e75d47445100634301ab0aa77d75c56749 100644
+index 523a2ff19f68d2e57025a832f17bae4778b1a14b..0ae37944f7b2918d416d440ee01bffd9deced85a 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -2,7 +2,7 @@ org.gradle.jvmargs=-Xmx3072M
