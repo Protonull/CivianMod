@@ -5,15 +5,15 @@ Subject: [PATCH] Use -PATCHED versioning
 
 
 diff --git a/gradle.properties b/gradle.properties
-index 70e3c27546bb00ee7ac51036049d3bf9cb81ce4e..e49aca874610f99d5de249d8907fd33dd9eb4193 100644
+index d6d8df85c7626591475f72eaf61b7a6589293e7d..df29ae3b3df50bcad02997cffa401c95a6ae7e75 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -2,7 +2,7 @@ org.gradle.jvmargs=-Xmx3072M
  
  archives_base_name=civmodern
  maven_group=sh.okx.civmodern
--mod_version=1.6.2
-+mod_version=1.6.2-PATCHED
+-mod_version=1.6.3
++mod_version=1.6.3-PATCHED
  mod_description=Civ Modern
  copyright_licence=GPLv3
  mod_home_url=https://github.com/okx-code/civmodern

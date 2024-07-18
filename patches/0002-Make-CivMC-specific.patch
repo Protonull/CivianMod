@@ -8,10 +8,10 @@ diff --git a/civmc b/civmc
 deleted file mode 100644
 index e69de29bb2d1d6434b8b29ae775ad8c2e48c5391..0000000000000000000000000000000000000000
 diff --git a/common/src/main/java/sh/okx/civmodern/common/radar/Radar.java b/common/src/main/java/sh/okx/civmodern/common/radar/Radar.java
-index f62e3cdca8d0a6efa00fc9fbe9b4f99ac622d240..2354ee0cec414372c7dbc29022c85fed994b2a8a 100644
+index 2f1653ef51b0920dcb8a0d6769559e97feb6b1dd..610ad6730b13fd01f8b73558cd5fca98ea39d2c8 100644
 --- a/common/src/main/java/sh/okx/civmodern/common/radar/Radar.java
 +++ b/common/src/main/java/sh/okx/civmodern/common/radar/Radar.java
-@@ -46,7 +46,6 @@ import sh.okx.civmodern.common.events.ClientTickEvent;
+@@ -45,7 +45,6 @@ import sh.okx.civmodern.common.events.ClientTickEvent;
  import sh.okx.civmodern.common.events.EventBus;
  import sh.okx.civmodern.common.events.PostRenderGameOverlayEvent;
  
@@ -19,7 +19,7 @@ index f62e3cdca8d0a6efa00fc9fbe9b4f99ac622d240..2354ee0cec414372c7dbc29022c85fed
  import java.util.Collections;
  import java.util.HashSet;
  import java.util.Random;
-@@ -56,18 +55,6 @@ import java.util.UUID;
+@@ -55,18 +54,6 @@ import java.util.UUID;
  import static org.lwjgl.opengl.GL11.*;
  
  public class Radar {
@@ -38,7 +38,7 @@ index f62e3cdca8d0a6efa00fc9fbe9b4f99ac622d240..2354ee0cec414372c7dbc29022c85fed
      private final EventBus eventBus;
      private final ColourProvider colourProvider;
      private final CivMapConfig config;
-@@ -97,7 +84,7 @@ public class Radar {
+@@ -96,7 +83,7 @@ public class Radar {
      }
  
      private boolean hideY() {

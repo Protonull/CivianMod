@@ -223,7 +223,7 @@ index 1c234ad8c6fdb49bfbf818df01f24e867bc10c0f..640395fdfe7d3747ea54cd40b4a96a3e
 +    }
  }
 diff --git a/common/src/main/resources/assets/civmodern/lang/en_us.json b/common/src/main/resources/assets/civmodern/lang/en_us.json
-index 61c55e1b5c88affb814e5c4337d9e0cd75032d0b..9a70c15e6a49c4546562681da0bf91b89f6ac8cd 100644
+index 445b1cb034c052dea88e8f3b932fa29dd0877f59..40903ee08e0f973d544190ad2926d6de7b7d59a4 100644
 --- a/common/src/main/resources/assets/civmodern/lang/en_us.json
 +++ b/common/src/main/resources/assets/civmodern/lang/en_us.json
 @@ -27,6 +27,8 @@
@@ -233,8 +233,8 @@ index 61c55e1b5c88affb814e5c4337d9e0cd75032d0b..9a70c15e6a49c4546562681da0bf91b8
 +    "civmodern.screen.items.showRepair": "Show repair level",
 +    "civmodern.screen.items.showRepair.tooltip": "Whether to show the item's base repair level. This ISN'T the total repair cost in an Anvil! The total cost is typically level+2.",
      "civmodern.screen.ice.title": "Civ Modern Config (Ice Road Macro)",
-     "civmodern.screen.ice.cardinal.pitch.enable": "Snap pitch to cardinal: Enabled",
-     "civmodern.screen.ice.cardinal.pitch.disable": "Snap pitch to cardinal: Disabled",
+     "civmodern.screen.ice.cardinal.pitch.enable": "Snap pitch: Enabled",
+     "civmodern.screen.ice.cardinal.pitch.disable": "Snap pitch: Disabled",
 @@ -38,5 +40,7 @@
      "civmodern.screen.ice.stop.disable": "Stop on low food: Disabled",
      "civmodern.radar.enter" : "§r%s §eappeared at §b[%s§b]",
@@ -244,4 +244,3 @@ index 61c55e1b5c88affb814e5c4337d9e0cd75032d0b..9a70c15e6a49c4546562681da0bf91b8
 +    "civmodern.repair.level": "§fRepair level: %s",
 +    "civmodern.button.toggle": "%s: %s"
  }
-\ No newline at end of file

@@ -153,7 +153,7 @@ index b479941e8c4381c114d302f9a15ab362e941aa4b..e829d2b897a16cdc6569f8b21d010494
 +    @NotNull InputConstants.Key getKey();
  }
 diff --git a/common/src/main/resources/assets/civmodern/lang/en_us.json b/common/src/main/resources/assets/civmodern/lang/en_us.json
-index 9a70c15e6a49c4546562681da0bf91b89f6ac8cd..fee19b39fe44a79924a974eec81393ad60481770 100644
+index 40903ee08e0f973d544190ad2926d6de7b7d59a4..35b7129c6bf7b90f21e474e0a5a5ae7588b676be 100644
 --- a/common/src/main/resources/assets/civmodern/lang/en_us.json
 +++ b/common/src/main/resources/assets/civmodern/lang/en_us.json
 @@ -2,6 +2,7 @@

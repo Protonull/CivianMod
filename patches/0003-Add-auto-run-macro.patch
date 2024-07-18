@@ -38,7 +38,7 @@ index 6182ea076d8296b9bd4ccd4a53b7f0fa482f37f4..71c23dac30df9c8c6b45077dd4f31ee8
          this.attackMacro = new AttackMacro(this, this.attackBinding, options.keyAttack);
      }
 diff --git a/common/src/main/resources/assets/civmodern/lang/en_us.json b/common/src/main/resources/assets/civmodern/lang/en_us.json
-index 56791d67771c47a65570606b196620b1f09910f1..61c55e1b5c88affb814e5c4337d9e0cd75032d0b 100644
+index ecdac5dcb066e86e004dc500867d901b87169b73..445b1cb034c052dea88e8f3b932fa29dd0877f59 100644
 --- a/common/src/main/resources/assets/civmodern/lang/en_us.json
 +++ b/common/src/main/resources/assets/civmodern/lang/en_us.json
 @@ -1,6 +1,7 @@
