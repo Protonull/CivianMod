@@ -11,6 +11,12 @@ import org.jetbrains.annotations.NotNull;
 public final class CivianModHelpers {
     private static final Pattern LEGACY_FORMATTER_REGEX = Pattern.compile("§.");
 
+    public static <T> @NotNull Object obscure(
+        final @NotNull T instance
+    ) {
+        return instance;
+    }
+
     public static boolean isNullOrEmpty(
         final Component component
     ) {

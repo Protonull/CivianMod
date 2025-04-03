@@ -2,6 +2,7 @@ package uk.protonull.civianmod.features;
 
 import java.util.List;
 import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -33,25 +34,11 @@ public final class CompactedItem {
         return CivianModHelpers.hasPlainLoreLine(item, COMPACTED_LORE, false);
     }
 
-    public static @NotNull CompactedItemType getCompactedItemType(
-        final @NotNull ItemStack item
-    ) {
-        return ((CompactedItem.PotentiallyCompactedItem) (Object) item).civianmod$getCompactedItemType();
-    }
-
-    public interface PotentiallyCompactedItem {
-        @NotNull CompactedItemType civianmod$getCompactedItemType();
-    }
-
-    public enum CompactedItemType {
-        NORMAL, CRATE, COMPACTED
-    }
-
     public static @NotNull ItemStack createExampleCrate() {
         final var item = new ItemStack(Items.CHEST);
         item.setCount(item.getMaxStackSize());
         item.applyComponents(
-            DataComponentMap.builder()
+            DataComponentPatch.builder()
                 .set(DataComponents.LORE, new ItemLore(List.of(
                     Component.literal(CompactedItem.CRATE_LORE)
                 )))

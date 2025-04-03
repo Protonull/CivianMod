@@ -21,11 +21,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.protonull.civianmod.config.CivianModConfig;
 import uk.protonull.civianmod.config.ItemSettings;
 import uk.protonull.civianmod.config.TooltipLineOption;
+import uk.protonull.civianmod.features.CivianItemStack;
 import uk.protonull.civianmod.features.CompactedItem;
 import uk.protonull.civianmod.features.ExpIngredients;
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements CompactedItem.PotentiallyCompactedItem {
+public abstract class ItemStackMixin implements CivianItemStack {
     @Shadow
     public abstract DataComponentMap getComponents();
 
@@ -39,26 +40,40 @@ public abstract class ItemStackMixin implements CompactedItem.PotentiallyCompact
     public abstract int getMaxDamage();
 
     // ============================================================
-    // Compacted item detection
+    // Civian ItemStack
     // ============================================================
 
     @Unique
-    private CompactedItem.CompactedItemType civianmod$compactedType = null;
+    private volatile boolean alwaysShowAmountDecoration = false;
 
-    public @NotNull CompactedItem.CompactedItemType civianmod$getCompactedItemType() {
-        if (this.civianmod$compactedType == null) {
-            final var self = (ItemStack) (Object) this;
-            if (CompactedItem.isCrate(self)) {
-                this.civianmod$compactedType = CompactedItem.CompactedItemType.CRATE;
-            }
-            else if (CompactedItem.isCompacted(self)) {
-                this.civianmod$compactedType = CompactedItem.CompactedItemType.COMPACTED;
-            }
-            else {
-                this.civianmod$compactedType = CompactedItem.CompactedItemType.NORMAL;
-            }
+    @Unique
+    private volatile int amountDecorationColour = CivianItemStack.DEFAULT_AMOUNT_DECORATION_COLOUR;
+
+    @Override
+    public void civianmod$update() {
+        final var self = (ItemStack) (Object) this;
+        if (CompactedItem.isCrate(self)) {
+            this.alwaysShowAmountDecoration = true;
+            this.amountDecorationColour = CompactedItem.CRATE_COLOUR;
         }
-        return this.civianmod$compactedType;
+        else if (CompactedItem.isCompacted(self)) {
+            this.alwaysShowAmountDecoration = true;
+            this.amountDecorationColour = CompactedItem.COMPACTED_COLOUR;
+        }
+        else {
+            this.alwaysShowAmountDecoration = false;
+            this.amountDecorationColour = CivianItemStack.DEFAULT_AMOUNT_DECORATION_COLOUR;
+        }
+    }
+
+    @Override
+    public boolean civianmod$alwaysShowAmountDecoration() {
+        return this.alwaysShowAmountDecoration;
+    }
+
+    @Override
+    public int civianmod$amountDecorationColour() {
+        return this.amountDecorationColour;
     }
 
     // ============================================================
